@@ -1,9 +1,15 @@
 from django.db import models
+import re
+from django.core import validators
 from django.contrib.auth.models import (AbstractBaseUser, PermissionsMixin, UserManager)
 # Create your models here.
 
 class User(AbstractBaseUser, PermissionsMixin):
-    username = models.CharField('Nome de Usuário', max_length=30, unique=True)
+    username = models.CharField(
+        'Nome de Usuário', max_length=30, unique=True,
+        validators = [validators.RegexValidator(re.compile('^[\w.@+-]+$'),
+        'O nome de usuário só pode conter letras, digitos ou @/./+/-/_', 'invalid')]
+        )
     email = models.EmailField('E-mail', unique=True)
     name = models.CharField('Nome', max_length=100, blank=True)
     is_active = models.BooleanField('Está ativo?', blank=True, default=True)
